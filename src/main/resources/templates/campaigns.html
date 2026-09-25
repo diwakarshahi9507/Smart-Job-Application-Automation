@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobReach - Campaigns</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .page-header h2 {
+            margin: 0 0 6px;
+        }
+
+        .campaign-layout {
+            display: grid;
+            grid-template-columns: 0.95fr 1.5fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .campaign-card {
+            padding: 22px;
+        }
+
+        .campaign-card h3 {
+            margin: 0 0 18px;
+            font-size: 19px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .helper-text {
+            margin-top: 6px;
+            font-size: 12px;
+        }
+
+        .campaign-table-card {
+            padding: 22px;
+        }
+
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            max-width: 320px;
+        }
+
+        .recipient-selection {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid #2c3038;
+        }
+
+        .recipient-selection h4 {
+            margin: 0 0 12px;
+            font-size: 14px;
+            color: #f5f7fa;
+        }
+
+        .recipient-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .recipient-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            padding: 11px;
+            border: 1px solid #2c3038;
+            border-radius: 10px;
+            background: #111318;
+        }
+
+        .recipient-option:hover {
+            background: #181b20;
+        }
+
+        .recipient-option input {
+            margin-top: 2px;
+            flex: 0 0 auto;
+        }
+
+        .recipient-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .recipient-details strong {
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .recipient-details span {
+            color: #6b7280;
+            font-size: 11px;
+            overflow-wrap: anywhere;
+        }
+
+        .action-row {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .campaign-name {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .campaign-meta {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+        .message {
+            padding: 12px 16px;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 1050px) {
+            .campaign-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .recipient-list {
+                grid-template-columns: 1fr;
+            }
+
+            .table-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">JR</div>
+            <div>
+                <h2>JobReach</h2>
+                <span>Recruiter Outreach</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a th:href="@{/dashboard}" class="menu-item">
+                <span>⌂</span>
+                Dashboard
+            </a>
+
+            <a th:href="@{/campaigns}" class="menu-item active">
+                <span>✉</span>
+                Campaigns
+            </a>
+
+            <a th:href="@{/recruiters}" class="menu-item">
+                <span>♙</span>
+                Recruiters
+            </a>
+
+            <a th:href="@{/templates}" class="menu-item">
+                <span>▤</span>
+                Templates
+            </a>
+
+            <a th:href="@{/analytics}" class="menu-item">
+                <span>◴</span>
+                Analytics
+            </a>
+
+            <a th:href="@{/settings}" class="menu-item">
+                <span>⚙</span>
+                Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>Smart Job Application</p>
+            <span>Version 1.0</span>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Campaigns</h1>
+                <p>Create, send and track recruiter outreach campaigns</p>
+            </div>
+
+            <div class="user-profile">
+                <div class="avatar">DK</div>
+                <div>
+                    <strong>Diwakar Kumar</strong>
+                    <span>Job Applicant</span>
+                </div>
+            </div>
+
+        </header>
+
+
+        <section class="page-header">
+            <div>
+                <h2>Campaign Management</h2>
+                <p>Create a campaign, select a DB template and send to selected recruiters.</p>
+            </div>
+        </section>
+
+
+        <!-- MESSAGES -->
+        <div th:if="${param.sent}"
+             class="message success-message">
+            Campaign send completed:
+            <strong th:text="${param.sent[0]}">0</strong>
+            sent,
+            <strong th:text="${param.failed != null ? param.failed[0] : '0'}">0</strong>
+            failed.
+        </div>
+
+        <div th:if="${param.error}"
+             class="message error-message"
+             th:text="${param.error[0]}">
+        </div>
+
+
+        <section class="campaign-layout">
+
+            <!-- CREATE CAMPAIGN -->
+            <div class="panel campaign-card">
+
+                <h3>Create Campaign</h3>
+
+                <form th:action="@{/campaigns/create}"
+                      th:object="${campaign}"
+                      method="post">
+
+                    <div class="form-group">
+                        <label for="campaignName">Campaign Name</label>
+
+                        <input id="campaignName"
+                               type="text"
+                               th:field="*{campaignName}"
+                               placeholder="e.g. Java Backend September Outreach"
+                               required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="position">Position</label>
+
+                        <input id="position"
+                               type="text"
+                               th:field="*{position}"
+                               placeholder="e.g. Java Backend Developer"
+                               required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="templateId">Email Template</label>
+
+                        <select id="templateId"
+                                name="templateId"
+                                required>
+
+                            <option value="">
+                                Select Template
+                            </option>
+
+                            <option th:each="template : ${templates}"
+                                    th:value="${template.id}"
+                                    th:text="${template.name}">
+                                Template
+                            </option>
+
+                        </select>
+
+                        <p class="helper-text">
+                            Templates are loaded from the database.
+                        </p>
+                    </div>
+
+
+                    <button type="submit"
+                            class="primary-button">
+                        Create Campaign
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- CAMPAIGN HISTORY -->
+            <div class="panel campaign-table-card">
+
+                <div class="table-toolbar">
+
+                    <h3 style="margin:0;">
+                        Campaign History
+                    </h3>
+
+                    <input type="text"
+                           id="campaignSearch"
+                           class="search-input"
+                           placeholder="Search campaign..."
+                           onkeyup="filterCampaigns()">
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                        <tr>
+                            <th>Campaign</th>
+                            <th>Position</th>
+                            <th>Template</th>
+                            <th>Recruiters</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr class="campaign-row"
+                            th:each="campaignItem : ${campaigns}">
+
+                            <td>
+                                <div class="campaign-name"
+                                     th:text="${campaignItem.campaignName}">
+                                    Campaign
+                                </div>
+
+                                <div class="campaign-meta">
+                                    ID:
+                                    <span th:text="${campaignItem.id}">
+                                        1
+                                    </span>
+                                </div>
+                            </td>
+
+
+                            <td th:text="${campaignItem.position != null && !campaignItem.position.isBlank()
+                                    ? campaignItem.position
+                                    : '-'}">
+                                -
+                            </td>
+
+
+                            <td th:text="${campaignItem.template != null
+                                    ? campaignItem.template.name
+                                    : '-'}">
+                                -
+                            </td>
+
+
+                            <td th:text="${campaignItem.recruiterCount != null
+                                    ? campaignItem.recruiterCount
+                                    : 0}">
+                                0
+                            </td>
+
+
+                            <td>
+                                <span class="status-badge"
+                                      th:classappend="${campaignItem.status == 'COMPLETED'} ? ' status-sent' :
+                                                     (${campaignItem.status == 'FAILED'} ? ' status-failed' :
+                                                     (${campaignItem.status == 'PARTIAL'} ? ' status-pending' :
+                                                     ' status-other'))"
+                                      th:text="${campaignItem.status != null
+                                              ? campaignItem.status
+                                              : '-'}">
+                                    CREATED
+                                </span>
+                            </td>
+
+
+                            <td th:text="${campaignItem.createdTime != null
+                                    ? #temporals.format(campaignItem.createdTime, 'dd-MM-yyyy HH:mm')
+                                    : '-'}">
+                                -
+                            </td>
+
+
+                            <td>
+                                <a th:href="@{/campaigns/{id}(id=${campaignItem.id})}"
+                                   class="secondary-button">
+                                    View Details
+                                </a>
+                            </td>
+
+                        </tr>
+
+
+                        <tr th:if="${campaigns == null || campaigns.isEmpty()}">
+
+                            <td colspan="7"
+                                class="empty-state">
+
+                                No campaigns created yet.
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SEND CAMPAIGN -->
+        <section class="panel campaign-card"
+                 style="margin-top:24px;">
+
+            <h3>Send Campaign</h3>
+
+            <form th:action="@{/campaigns/send}"
+                  method="post">
+
+                <div class="form-group">
+                    <label for="campaignId">Select Campaign</label>
+
+                    <select id="campaignId"
+                            name="campaignId"
+                            required>
+
+                        <option value="">
+                            Select Campaign
+                        </option>
+
+                        <option th:each="campaignItem : ${campaigns}"
+                                th:value="${campaignItem.id}"
+                                th:text="${campaignItem.campaignName}">
+                            Campaign
+                        </option>
+
+                    </select>
+                </div>
+
+
+                <div class="recipient-selection">
+
+                    <h4>Select Recruiters</h4>
+
+                    <div class="recipient-list">
+
+                        <label class="recipient-option"
+                               th:each="recruiter : ${recruiters}">
+
+                            <input type="checkbox"
+                                   name="selectedIds"
+                                   th:value="${recruiter.id}">
+
+                            <span class="recipient-details">
+
+                                <strong th:text="${recruiter.firstName != null && !recruiter.firstName.isBlank()
+                                        ? recruiter.firstName
+                                        : recruiter.email}">
+                                    Recruiter
+                                </strong>
+
+                                <span th:text="${recruiter.company != null && !recruiter.company.isBlank()
+                                        ? recruiter.company
+                                        : '-'}">
+                                    Company
+                                </span>
+
+                                <span th:text="${recruiter.email}">
+                                    recruiter@example.com
+                                </span>
+
+                            </span>
+
+                        </label>
+
+
+                        <div th:if="${recruiters == null || recruiters.isEmpty()}"
+                             class="empty-state">
+                            No active recruiters available.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="action-row">
+
+                    <button type="button"
+                            class="secondary-button"
+                            onclick="selectAllRecruiters()">
+                        Select All
+                    </button>
+
+                    <button type="button"
+                            class="secondary-button"
+                            onclick="clearAllRecruiters()">
+                        Clear
+                    </button>
+
+                    <button type="submit"
+                            class="primary-button">
+                        Send Campaign
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    function filterCampaigns() {
+
+        const filter =
+            document.getElementById("campaignSearch")
+                .value
+                .toLowerCase();
+
+        document
+            .querySelectorAll(".campaign-row")
+            .forEach(function (row) {
+
+                row.style.display =
+                    row.textContent
+                        .toLowerCase()
+                        .includes(filter)
+                        ? ""
+                        : "none";
+            });
+    }
+
+
+    function selectAllRecruiters() {
+
+        document
+            .querySelectorAll('input[name="selectedIds"]')
+            .forEach(function (checkbox) {
+                checkbox.checked = true;
+            });
+    }
+
+
+    function clearAllRecruiters() {
+
+        document
+            .querySelectorAll('input[name="selectedIds"]')
+            .forEach(function (checkbox) {
+                checkbox.checked = false;
+            });
+    }
+
+</script>
+
+</body>
+</html>

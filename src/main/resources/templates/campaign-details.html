@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobReach - Campaign Details</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .page-header h2 {
+            margin: 0 0 6px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            padding: 22px;
+        }
+
+        .summary-card span {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .summary-card strong {
+            font-size: 30px;
+        }
+
+        .campaign-info-card,
+        .recipients-card {
+            padding: 22px;
+            margin-bottom: 24px;
+        }
+
+        .campaign-info-card h3,
+        .recipients-card h3 {
+            margin: 0 0 18px;
+            font-size: 19px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .info-item {
+            padding: 14px;
+            border: 1px solid #2c3038;
+            border-radius: 12px;
+            background: #111318;
+        }
+
+        .info-item span {
+            display: block;
+            margin-bottom: 6px;
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .info-item strong {
+            color: #fff;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .message {
+            padding: 12px 16px;
+            margin-bottom: 18px;
+        }
+
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            max-width: 340px;
+        }
+
+        .retry-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 16px;
+        }
+
+        .error-cell {
+            max-width: 320px;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            color: #fca5a5;
+        }
+
+        table {
+            min-width: 1150px;
+        }
+
+        @media (max-width: 1000px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                max-width: none;
+            }
+
+            .retry-section {
+                justify-content: stretch;
+            }
+
+            .retry-section form,
+            .retry-section button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">JR</div>
+            <div>
+                <h2>JobReach</h2>
+                <span>Recruiter Outreach</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a th:href="@{/dashboard}" class="menu-item">
+                <span>⌂</span>
+                Dashboard
+            </a>
+
+            <a th:href="@{/campaigns}" class="menu-item active">
+                <span>✉</span>
+                Campaigns
+            </a>
+
+            <a th:href="@{/recruiters}" class="menu-item">
+                <span>♙</span>
+                Recruiters
+            </a>
+
+            <a th:href="@{/templates}" class="menu-item">
+                <span>▤</span>
+                Templates
+            </a>
+
+            <a th:href="@{/analytics}" class="menu-item">
+                <span>◴</span>
+                Analytics
+            </a>
+
+            <a th:href="@{/settings}" class="menu-item">
+                <span>⚙</span>
+                Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>Smart Job Application</p>
+            <span>Version 1.0</span>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Campaign Details</h1>
+                <p>View delivery status, attempts and failure information</p>
+            </div>
+
+            <div class="user-profile">
+                <div class="avatar">DK</div>
+                <div>
+                    <strong>Diwakar Kumar</strong>
+                    <span>Job Applicant</span>
+                </div>
+            </div>
+
+        </header>
+
+
+        <section class="page-header">
+
+            <div>
+                <h2 th:text="${campaign.campaignName}">
+                    Campaign Name
+                </h2>
+
+                <p>
+                    Campaign ID:
+                    <span th:text="${campaign.id}">
+                        1
+                    </span>
+                </p>
+            </div>
+
+            <div class="header-actions">
+
+                <a th:href="@{/campaigns}"
+                   class="secondary-button">
+                    ← Back to Campaigns
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- MESSAGES -->
+        <div th:if="${param.message}"
+             class="message success-message"
+             th:text="${param.message[0]}">
+        </div>
+
+        <div th:if="${param.sent}"
+             class="message success-message">
+
+            Retry completed:
+
+            <strong th:text="${param.sent[0]}">
+                0
+            </strong>
+
+            sent,
+
+            <strong th:text="${param.failed != null ? param.failed[0] : '0'}">
+                0
+            </strong>
+
+            failed.
+
+        </div>
+
+        <div th:if="${param.error}"
+             class="message error-message"
+             th:text="${param.error[0]}">
+        </div>
+
+
+        <!-- SUMMARY -->
+        <section class="summary-grid">
+
+            <div class="summary-card">
+                <span>Total Recipients</span>
+                <strong th:text="${totalRecipients}">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Sent</span>
+                <strong th:text="${sentCount}">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Failed</span>
+                <strong th:text="${failedCount}">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Pending</span>
+                <strong th:text="${pendingCount}">0</strong>
+            </div>
+
+        </section>
+
+
+        <!-- CAMPAIGN INFO -->
+        <section class="campaign-info-card">
+
+            <h3>Campaign Information</h3>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <span>Campaign Name</span>
+                    <strong th:text="${campaign.campaignName}">
+                        Campaign
+                    </strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Position</span>
+                    <strong th:text="${campaign.position != null && !campaign.position.isBlank()
+                            ? campaign.position
+                            : '-'}">
+                        -
+                    </strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Email Template</span>
+                    <strong th:text="${campaign.template != null
+                            ? campaign.template.name
+                            : '-'}">
+                        -
+                    </strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Campaign Status</span>
+                    <strong th:text="${campaign.status != null
+                            ? campaign.status
+                            : '-'}">
+                        -
+                    </strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Recruiter Count</span>
+                    <strong th:text="${campaign.recruiterCount != null
+                            ? campaign.recruiterCount
+                            : 0}">
+                        0
+                    </strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Created Time</span>
+                    <strong th:text="${campaign.createdTime != null
+                            ? #temporals.format(campaign.createdTime, 'dd-MM-yyyy HH:mm')
+                            : '-'}">
+                        -
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RECIPIENT TABLE -->
+        <section class="recipients-card">
+
+            <div class="table-toolbar">
+
+                <h3 style="margin:0;">
+                    Campaign Recipients
+                </h3>
+
+                <input type="text"
+                       id="recipientSearch"
+                       class="search-input"
+                       placeholder="Search recruiter, email, company..."
+                       onkeyup="filterRecipients()">
+
+            </div>
+
+
+            <!-- RETRY FAILED -->
+            <div class="retry-section"
+                 th:if="${failedCount != null && failedCount > 0}">
+
+                <form th:action="@{/campaigns/{id}/retry-failed(id=${campaign.id})}"
+                      method="post"
+                      onsubmit="return confirm('Retry all failed emails for this campaign?');">
+
+                    <button type="submit"
+                            class="primary-button">
+                        Retry Failed Emails
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                    <tr>
+                        <th>Recruiter</th>
+                        <th>Email</th>
+                        <th>Company</th>
+                        <th>Position</th>
+                        <th>Status</th>
+                        <th>Attempt Time</th>
+                        <th>Sent Time</th>
+                        <th>Error Message</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr class="recipient-row"
+                        th:each="recipient : ${recipients}">
+
+                        <td th:text="${recipient.recruiter != null
+                                && recipient.recruiter.firstName != null
+                                && !recipient.recruiter.firstName.isBlank()
+                                ? recipient.recruiter.firstName
+                                : '-'}">
+                            -
+                        </td>
+
+                        <td th:text="${recipient.recruiter != null
+                                ? recipient.recruiter.email
+                                : '-'}">
+                            -
+                        </td>
+
+                        <td th:text="${recipient.recruiter != null
+                                && recipient.recruiter.company != null
+                                && !recipient.recruiter.company.isBlank()
+                                ? recipient.recruiter.company
+                                : '-'}">
+                            -
+                        </td>
+
+                        <td th:text="${recipient.recruiter != null
+                                && recipient.recruiter.position != null
+                                && !recipient.recruiter.position.isBlank()
+                                ? recipient.recruiter.position
+                                : '-'}">
+                            -
+                        </td>
+
+                        <td>
+
+                            <span class="status-badge"
+                                  th:classappend="${recipient.status == 'SENT'} ? ' status-sent' :
+                                                 (${recipient.status == 'FAILED'} ? ' status-failed' :
+                                                 (${recipient.status == 'PENDING'} ? ' status-pending' :
+                                                 ' status-other'))"
+                                  th:text="${recipient.status != null
+                                          ? recipient.status
+                                          : '-'}">
+                                PENDING
+                            </span>
+
+                        </td>
+
+
+                        <td th:text="${recipient.attemptTime != null
+                                ? #temporals.format(recipient.attemptTime, 'dd-MM-yyyy HH:mm:ss')
+                                : '-'}">
+                            -
+                        </td>
+
+
+                        <td th:text="${recipient.sentTime != null
+                                ? #temporals.format(recipient.sentTime, 'dd-MM-yyyy HH:mm:ss')
+                                : '-'}">
+                            -
+                        </td>
+
+
+                        <td class="error-cell"
+                            th:text="${recipient.errorMessage != null
+                                    && !recipient.errorMessage.isBlank()
+                                    ? recipient.errorMessage
+                                    : '-'}">
+                            -
+                        </td>
+
+                    </tr>
+
+
+                    <tr th:if="${recipients == null || recipients.isEmpty()}">
+
+                        <td colspan="8"
+                            class="empty-state">
+
+                            No recipients found for this campaign.
+
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    function filterRecipients() {
+
+        const filter =
+            document.getElementById("recipientSearch")
+                .value
+                .toLowerCase();
+
+        document
+            .querySelectorAll(".recipient-row")
+            .forEach(function (row) {
+
+                row.style.display =
+                    row.textContent
+                        .toLowerCase()
+                        .includes(filter)
+                        ? ""
+                        : "none";
+            });
+    }
+
+</script>
+
+</body>
+</html>

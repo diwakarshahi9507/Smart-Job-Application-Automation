@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobReach - Analytics</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .page-header h2 {
+            margin: 0 0 6px;
+        }
+
+        .section-title {
+            margin: 0 0 16px;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .analytics-card {
+            padding: 22px;
+        }
+
+        .analytics-card span {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .analytics-card strong {
+            display: block;
+            font-size: 30px;
+        }
+
+        .analytics-card small {
+            display: block;
+            margin-top: 8px;
+            color: #6b7280;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .analytics-section {
+            padding: 22px;
+            margin-bottom: 28px;
+        }
+
+        .analytics-section h3 {
+            margin: 0 0 18px;
+            font-size: 19px;
+        }
+
+        .progress-row {
+            margin-bottom: 18px;
+        }
+
+        .progress-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 7px;
+            font-size: 13px;
+            color: #d1d5db;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 12px;
+            background: #101216;
+            border: 1px solid #242830;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width .35s ease;
+        }
+
+        .progress-green {
+            background: linear-gradient(
+                    90deg,
+                    #16a34a,
+                    #4ade80
+            ) !important;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.30);
+        }
+
+        .progress-red {
+            background: linear-gradient(
+                    90deg,
+                    #dc2626,
+                    #f87171
+            ) !important;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.28);
+        }
+
+        .progress-yellow {
+            background: linear-gradient(
+                    90deg,
+                    #d97706,
+                    #facc15
+            ) !important;
+            box-shadow: 0 0 12px rgba(250, 204, 21, 0.25);
+        }
+
+        .summary-note {
+            padding: 16px;
+            line-height: 1.65;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1000px) {
+            .analytics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">JR</div>
+            <div>
+                <h2>JobReach</h2>
+                <span>Recruiter Outreach</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a th:href="@{/dashboard}" class="menu-item">
+                <span>⌂</span>
+                Dashboard
+            </a>
+
+            <a th:href="@{/campaigns}" class="menu-item">
+                <span>✉</span>
+                Campaigns
+            </a>
+
+            <a th:href="@{/recruiters}" class="menu-item">
+                <span>♙</span>
+                Recruiters
+            </a>
+
+            <a th:href="@{/templates}" class="menu-item">
+                <span>▤</span>
+                Templates
+            </a>
+
+            <a th:href="@{/analytics}" class="menu-item active">
+                <span>◴</span>
+                Analytics
+            </a>
+
+            <a th:href="@{/settings}" class="menu-item">
+                <span>⚙</span>
+                Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>Smart Job Application</p>
+            <span>Version 1.0</span>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Analytics</h1>
+                <p>Track recruiter outreach and campaign delivery performance</p>
+            </div>
+
+            <div class="user-profile">
+                <div class="avatar">DK</div>
+                <div>
+                    <strong>Diwakar Kumar</strong>
+                    <span>Job Applicant</span>
+                </div>
+            </div>
+
+        </header>
+
+
+        <section class="page-header">
+
+            <div>
+                <h2>Outreach Overview</h2>
+                <p>Live recruiter statistics and historical campaign delivery analytics.</p>
+            </div>
+
+        </section>
+
+
+        <!-- RECRUITER OVERVIEW -->
+        <h3 class="section-title">
+            Recruiter Overview
+        </h3>
+
+        <section class="analytics-grid">
+
+            <div class="analytics-card">
+                <span>Total Active Recruiters</span>
+                <strong th:text="${totalRecruiters}">0</strong>
+                <small>Recruiters currently available for outreach</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Latest Status: Sent</span>
+                <strong th:text="${sentCount}">0</strong>
+                <small>Recruiters whose latest email status is SENT</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Latest Status: Failed</span>
+                <strong th:text="${failedCount}">0</strong>
+                <small>Recruiters whose latest email status is FAILED</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Latest Status: Pending</span>
+                <strong th:text="${pendingCount}">0</strong>
+                <small>Recruiters waiting for outreach</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Recruiter Success Rate</span>
+
+                <strong th:text="${#numbers.formatDecimal(successRate, 1, 1) + '%'}">
+                    0.0%
+                </strong>
+
+                <small>Latest SENT recruiters ÷ total active recruiters</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Total Campaigns</span>
+                <strong th:text="${totalCampaigns}">0</strong>
+                <small>Total campaigns created in the system</small>
+            </div>
+
+        </section>
+
+
+        <!-- RECRUITER STATUS BREAKDOWN -->
+        <section class="analytics-section">
+
+            <h3>Recruiter Status Breakdown</h3>
+
+            <div class="progress-row">
+
+                <div class="progress-header">
+                    <span>Sent</span>
+                    <span th:text="${sentCount}">0</span>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill progress-green"
+                         th:style="'width: ' + (${totalRecruiters > 0 ? sentCount * 100.0 / totalRecruiters : 0}) + '%;'">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="progress-row">
+
+                <div class="progress-header">
+                    <span>Failed</span>
+                    <span th:text="${failedCount}">0</span>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill progress-red"
+                         th:style="'width: ' + (${totalRecruiters > 0 ? failedCount * 100.0 / totalRecruiters : 0}) + '%;'">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="progress-row">
+
+                <div class="progress-header">
+                    <span>Pending</span>
+                    <span th:text="${pendingCount}">0</span>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill progress-yellow"
+                         th:style="'width: ' + (${totalRecruiters > 0 ? pendingCount * 100.0 / totalRecruiters : 0}) + '%;'">
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CAMPAIGN DELIVERY PERFORMANCE -->
+        <h3 class="section-title">
+            Campaign Delivery Performance
+        </h3>
+
+        <section class="analytics-grid">
+
+            <div class="analytics-card">
+                <span>Total Email Attempts</span>
+                <strong th:text="${totalEmailAttempts}">0</strong>
+                <small>Total historical campaign-recipient records</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Campaign Emails Sent</span>
+                <strong th:text="${totalCampaignSent}">0</strong>
+                <small>Campaign recipient records with SENT status</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Campaign Emails Failed</span>
+                <strong th:text="${totalCampaignFailed}">0</strong>
+                <small>Campaign recipient records with FAILED status</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Campaign Emails Pending</span>
+                <strong th:text="${totalCampaignPending}">0</strong>
+                <small>Campaign recipient records still pending</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Campaign Success Rate</span>
+
+                <strong th:text="${#numbers.formatDecimal(campaignSuccessRate, 1, 1) + '%'}">
+                    0.0%
+                </strong>
+
+                <small>Campaign SENT records ÷ total email attempts</small>
+            </div>
+
+            <div class="analytics-card">
+                <span>Delivery History Source</span>
+                <strong>DB</strong>
+                <small>Calculated from campaign_recipients</small>
+            </div>
+
+        </section>
+
+
+        <!-- CAMPAIGN DELIVERY BREAKDOWN -->
+        <section class="analytics-section">
+
+            <h3>Campaign Delivery Breakdown</h3>
+
+            <div class="progress-row">
+
+                <div class="progress-header">
+                    <span>Sent</span>
+                    <span th:text="${totalCampaignSent}">0</span>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill progress-green"
+                         th:style="'width: ' + (${totalEmailAttempts > 0 ? totalCampaignSent * 100.0 / totalEmailAttempts : 0}) + '%;'">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="progress-row">
+
+                <div class="progress-header">
+                    <span>Failed</span>
+                    <span th:text="${totalCampaignFailed}">0</span>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill progress-red"
+                         th:style="'width: ' + (${totalEmailAttempts > 0 ? totalCampaignFailed * 100.0 / totalEmailAttempts : 0}) + '%;'">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="progress-row">
+
+                <div class="progress-header">
+                    <span>Pending</span>
+                    <span th:text="${totalCampaignPending}">0</span>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill progress-yellow"
+                         th:style="'width: ' + (${totalEmailAttempts > 0 ? totalCampaignPending * 100.0 / totalEmailAttempts : 0}) + '%;'">
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- EXPLANATION -->
+        <section class="summary-note">
+
+            <strong>Recruiter analytics:</strong>
+            reflects each active recruiter's latest overall email status.
+
+            <br><br>
+
+            <strong>Campaign analytics:</strong>
+            uses historical records from the
+            <code>campaign_recipients</code>
+            table, so previous campaign delivery history is preserved.
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>
