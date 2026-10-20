@@ -1,0 +1,104 @@
+[1mdiff --git a/pom.xml b/pom.xml[m
+[1mindex c0e8c9b..d476df5 100644[m
+[1m--- a/pom.xml[m
+[1m+++ b/pom.xml[m
+[36m@@ -40,6 +40,10 @@[m
+ 			<groupId>org.springframework.boot</groupId>[m
+ 			<artifactId>spring-boot-starter-data-jpa</artifactId>[m
+ 		</dependency>[m
+[32m+[m	[32m<dependency>[m
+[32m+[m		[32m<groupId>org.springframework.boot</groupId>[m
+[32m+[m		[32m<artifactId>spring-boot-starter-security</artifactId>[m
+[32m+[m	[32m</dependency>[m
+ 		<dependency>[m
+ 			<groupId>org.apache.tomcat</groupId>[m
+ 			<artifactId>tomcat-jasper</artifactId>[m
+[1mdiff --git a/src/main/java/com/telusko/Smart_Job_Application_Automation/Config/SecurityConfig.java b/src/main/java/com/telusko/Smart_Job_Application_Automation/Config/SecurityConfig.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..1821990[m
+[1m--- /dev/null[m
+[1m+++ b/src/main/java/com/telusko/Smart_Job_Application_Automation/Config/SecurityConfig.java[m
+[36m@@ -0,0 +1,38 @@[m
+[32m+[m[32mpackage com.telusko.Smart_Job_Application_Automation.Config;[m
+[32m+[m
+[32m+[m[32mimport org.springframework.context.annotation.Bean;[m
+[32m+[m[32mimport org.springframework.context.annotation.Configuration;[m
+[32m+[m[32mimport org.springframework.security.config.annotation.web.builders.HttpSecurity;[m
+[32m+[m[32mimport org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;[m
+[32m+[m[32mimport org.springframework.security.crypto.password.PasswordEncoder;[m
+[32m+[m[32mimport org.springframework.security.web.SecurityFilterChain;[m
+[32m+[m
+[32m+[m[32m@Configuration[m
+[32m+[m[32mpublic class SecurityConfig {[m
+[32m+[m
+[32m+[m[32m    @Bean[m
+[32m+[m[32m    public PasswordEncoder passwordEncoder() {[m
+[32m+[m[32m        return new BCryptPasswordEncoder();[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Bean[m
+[32m+[m[32m    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {[m
+[32m+[m[32m        http[m
+[32m+[m[32m                .authorizeHttpRequests(auth -> auth[m
+[32m+[m[32m                        .requestMatchers("/login", "/register", "/css/**").permitAll()[m
+[32m+[m[32m                        .anyRequest().authenticated()[m
+[32m+[m[32m                )[m
+[32m+[m[32m                .formLogin(form -> form[m
+[32m+[m[32m                        .loginPage("/login")[m
+[32m+[m[32m                        .defaultSuccessUrl("/dashboard", true)[m
+[32m+[m[32m                        .permitAll()[m
+[32m+[m[32m                )[m
+[32m+[m[32m                .logout(logout -> logout[m
+[32m+[m[32m                        .logoutSuccessUrl("/login?logout")[m
+[32m+[m[32m                        .permitAll()[m
+[32m+[m[32m                )[m
+[32m+[m[32m                .csrf(csrf -> csrf.disable());[m
+[32m+[m
+[32m+[m[32m        return http.build();[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/main/java/com/telusko/Smart_Job_Application_Automation/Model/User.java b/src/main/java/com/telusko/Smart_Job_Application_Automation/Model/User.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a2e4f4b[m
+[1m--- /dev/null[m
+[1m+++ b/src/main/java/com/telusko/Smart_Job_Application_Automation/Model/User.java[m
+[36m@@ -0,0 +1,20 @@[m
+[32m+[m[32mpackage com.telusko.Smart_Job_Application_Automation.Model;[m
+[32m+[m
+[32m+[m[32mimport jakarta.persistence.*;[m
+[32m+[m[32mimport lombok.Data;[m
+[32m+[m
+[32m+[m[32m@Entity[m
+[32m+[m[32m@Data[m
+[32m+[m[32mpublic class User {[m
+[32m+[m[32m    @Id[m
+[32m+[m[32m    @GeneratedValue(strategy = GenerationType.IDENTITY)[m
+[32m+[m[32m    private Long id;[m
+[32m+[m
+[32m+[m[32m    @Column(unique = true, nullable = false)[m
+[32m+[m[32m    private String username;[m
+[32m+[m
+[32m+[m[32m    @Column(nullable = false)[m
+[32m+[m[32m    private String password;[m
+[32m+[m
+[32m+[m[32m    private String role = "USER";[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/main/java/com/telusko/Smart_Job_Application_Automation/Repository/UserRepository.java b/src/main/java/com/telusko/Smart_Job_Application_Automation/Repository/UserRepository.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..3766a54[m
+[1m--- /dev/null[m
+[1m+++ b/src/main/java/com/telusko/Smart_Job_Application_Automation/Repository/UserRepository.java[m
+[36m@@ -0,0 +1,10 @@[m
+[32m+[m[32mpackage com.telusko.Smart_Job_Application_Automation.Repository;[m
+[32m+[m
+[32m+[m[32mimport com.telusko.Smart_Job_Application_Automation.Model.User;[m
+[32m+[m[32mimport org.springframework.data.jpa.repository.JpaRepository;[m
+[32m+[m
+[32m+[m[32mimport java.util.Optional;[m
+[32m+[m
+[32m+[m[32mpublic interface UserRepository extends JpaRepository<User, Long> {[m
+[32m+[m[32m    Optional<User> findByUsername(String username);[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
